@@ -5,6 +5,7 @@
 Dateping - a rudimentary attempt to see when packetloss happens. It is simple but effective and easy to run. Normal situaties with MTR (Mytraceroute) does show loss, but no timestamp is written down somewhe.
 
 ### How to use
+Set the permissions to execute (by `chmod +x dping`). And place it in '/usr/sbin/' or any best path you like (or symlink it from there).
 Best usage is within a `screen` to keep it running in the background.
 
 The 'help' from dping:
