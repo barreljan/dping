@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Created by Bartjan@pc-mania.nl, 6-Apr.,2017
+
+while test $# -gt 0; do
+        case "$1" in
+                -h|--help)
+                        echo "Dateping - a rudimentary attempt to see when packetloss happens "
+                        echo " "
+                        echo "dping [options] ipaddr"
+                        echo " "
+                        echo "options:"
+                        echo "-h, --help                show brief help"
+                        echo "-v, --verbose             logging of both success and failure on screen"
+                        echo " "
+                        echo "default is silent. Logging is always done to dping_<ipaddr>_err.log"
+                        echo "sending Ctrl-C stops this program "
+                        echo " "
+                        exit 0
+                        ;;
+                -v|--verbose)
+                        shift
+                        VERBOSE=1
+                        break
+                        ;;
+        *)
+                        VERBOSE=0
+                        break
+                        ;;
+        esac
+done
+
+if [[ -z "$1" && "$2" == "" ]]; then
+        echo "No IP Address given!"
+        exit 1
+fi
+
+if [[ -z "$1" && -z "$2" ]]; then
+        IPADDR="$2"
+        LOGFILE="$PWD/dping_"$IPADDR"_err.log"
+else
+        IPADDR="$1"
+        LOGFILE="$PWD/dping_"$IPADDR"_err.log"
+fi
+
+echo -e "Started at $(date)\n" >> $LOGFILE
+
+while [ 1 ];
+do
+        COMMAND=$(ping -c1 -W1 $1 | grep transmit)
+        DATE=$(date)
+        if [[ $COMMAND == *"0 received"* ]]; then
+                echo $DATE": "$COMMAND >> $LOGFILE
+        fi
+        if [[ "$VERBOSE" == "1" ]]; then
+                echo $DATE": "$COMMAND
+        fi
+        sleep 1
+        test $? -gt 128 && break
+done
+
+exit 0
